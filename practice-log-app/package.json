@@ -1,0 +1,36 @@
+{
+  "name": "practice-log",
+  "version": "1.0.0",
+  "description": "Claudia's OSSU practice log and habit tracker",
+  "main": "main.js",
+  "author": "Claudia",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.claudia.practicelog",
+    "productName": "Practice Log",
+    "icon": "icon.png",
+    "files": [
+      "main.js",
+      "index.html",
+      "icon.png"
+    ],
+    "mac": {
+      "target": "dmg",
+      "category": "public.app-category.productivity"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  }
+}
