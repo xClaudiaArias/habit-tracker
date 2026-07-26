@@ -1,6 +1,6 @@
 # Practice Log — desktop app
 
-Your OSSU habit tracker, wrapped as a real desktop app with Electron. Your data
+Your habit tracker, wrapped as a real desktop app with Electron. Your data
 saves permanently on your computer — no more resets on refresh.
 
 ## One-time setup
