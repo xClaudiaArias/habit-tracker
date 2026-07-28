@@ -65,8 +65,16 @@ async function saveData() {
 }
 
 function computeStreaks() {
-  const data = state.habitData['coding-challenge'] || {};
-  const doneDates = Object.keys(data).filter(d => data[d]).sort();
+  if (state.habits.length === 0) return { current: 0, longest: 0, total: 0 };
+
+  const habitDateSets = state.habits.map(h =>
+    new Set(Object.keys(state.habitData[h.id] || {}).filter(d => state.habitData[h.id][d]))
+  );
+  let completeDates = [...habitDateSets[0]];
+  for (let i = 1; i < habitDateSets.length; i++) {
+    completeDates = completeDates.filter(d => habitDateSets[i].has(d));
+  }
+  const doneDates = completeDates.sort();
   if (doneDates.length === 0) return { current: 0, longest: 0, total: 0 };
 
   const doneSet = new Set(doneDates);
@@ -183,6 +191,7 @@ async function addHabit() {
   state.habits.push({ id, name });
   input.value = '';
   await saveData();
+  renderStats();
   renderHabitTable();
 }
 
