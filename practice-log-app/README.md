@@ -1,6 +1,6 @@
 # Practice Log — desktop app
 
-Your habit tracker, wrapped as a real desktop app with Electron. Your data
+My Personal habit tracker, wrapped as a real desktop app with Electron. Your data
 saves permanently on your computer — no more resets on refresh.
 
 ## One-time setup
