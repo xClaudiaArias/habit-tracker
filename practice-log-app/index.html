@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Claudia's Practice log</title>
+<title>Practice log</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Quicksand:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Quicksand:wght@400;500;600;700&display=swap');
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -125,17 +125,33 @@ table.habit-table { border-collapse: separate; border-spacing: 4px; }
   position: sticky;
   left: 0;
   background: var(--surface);
-  min-width: 140px;
-  max-width: 140px;
+  min-width: 178px;
+  max-width: 178px;
   text-align: left;
   font-size: 13px;
   font-weight: 600;
   color: var(--text-secondary);
   padding: 0 8px 0 0;
-  white-space: nowrap;
+  z-index: 2;
+}
+.habit-name-row { display: flex; align-items: center; gap: 6px; }
+.habit-name-text {
   overflow: hidden;
   text-overflow: ellipsis;
-  z-index: 2;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+.habit-streak-badge {
+  font-family: 'Caveat', cursive;
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: var(--surface-2);
+  color: var(--text-muted);
+  flex-shrink: 0;
 }
 .habit-name-col .del-btn {
   background: none;
@@ -253,7 +269,7 @@ th.day-head.today-col { color: var(--pink); font-weight: 700; }
 
   <div class="card">
     <h2>habit tracker</h2>
-    <div class="sub">Tap a square to check off the day. A day only counts toward your streak once every habit is checked.</div>
+    <div class="sub">Tap a square to check off the day. The badge next to each habit is its own streak — the numbers above only count days you checked everything.</div>
     <div class="cal-nav">
       <button id="prev-month" aria-label="Previous month">&larr;</button>
       <div class="month-label" id="month-label">–</div>
@@ -280,8 +296,8 @@ th.day-head.today-col { color: var(--pink); font-weight: 700; }
 
 </div>
 
-  <script>
-    // Local desktop storage: mirrors the same get/set interface,
+<script>
+// Local desktop storage: mirrors the same get/set interface,
 // backed by this app's own persistent localStorage (survives restarts).
 window.storage = {
   async get(key) {
@@ -322,6 +338,20 @@ function fmt(d) {
   return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
 }
 function habitColor(index) { return HABIT_COLORS[index % HABIT_COLORS.length]; }
+
+function computeHabitStreak(habitId) {
+  const data = state.habitData[habitId] || {};
+  const doneSet = new Set(Object.keys(data).filter(d => data[d]));
+  let current = 0;
+  let cursor = new Date();
+  cursor.setHours(0, 0, 0, 0);
+  if (!doneSet.has(fmt(cursor))) cursor.setDate(cursor.getDate() - 1);
+  while (doneSet.has(fmt(cursor))) {
+    current++;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  return current;
+}
 
 async function loadData() {
   try {
@@ -441,7 +471,16 @@ function renderHabitTable() {
     nameTd.className = 'habit-name-col';
     nameTd.style.borderLeft = '3px solid ' + habitColor(idx);
     nameTd.style.paddingLeft = '6px';
-    nameTd.innerHTML = habit.name + ' <button class="del-btn" title="Remove habit">×</button>';
+    const streak = computeHabitStreak(habit.id);
+    const badgeColor = streak > 0 ? habitColor(idx) : null;
+    nameTd.innerHTML =
+      '<div class="habit-name-row">' +
+        '<span class="habit-name-text">' + habit.name + '</span>' +
+        '<span class="habit-streak-badge" style="' +
+          (badgeColor ? ('background:' + badgeColor + '26; color:' + badgeColor + ';') : '') +
+        '">' + streak + '</span>' +
+        '<button class="del-btn" title="Remove habit">×</button>' +
+      '</div>';
     nameTd.querySelector('.del-btn').addEventListener('click', () => removeHabit(habit.id));
     tr.appendChild(nameTd);
 
@@ -536,6 +575,6 @@ async function init() {
 }
 
 init();
-  </script>
+</script>
 </body>
 </html>
