@@ -1,7 +1,7 @@
 {
   "name": "practice-log",
   "version": "1.0.0",
-  "description": "Claudia's OSSU practice log and habit tracker",
+  "description": "Claudia's practice log and habit tracker",
   "main": "main.js",
   "author": "Claudia",
   "license": "MIT",
